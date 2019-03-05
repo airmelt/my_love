@@ -123,6 +123,8 @@ def txt2excel(input_file, out_file):
     # 输出文件带上时间
     out_file = out_file + time.strftime("%Y-%m-%d", time.localtime()) + '.xls'
     file2.save(out_file)
+    # 返回文件名
+    return out_file
 
 
 def delete(input_file):
