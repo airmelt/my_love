@@ -3,7 +3,7 @@
 
 """
 @description: 爬虫爬取百度搜索结果数/Spider for searching result from baidu.com
-@file_name: 300_search_results.py
+@file_name: search_results_300.py
 @project: my_love
 @version: 1.0
 @date: 2018/11/8 17:28

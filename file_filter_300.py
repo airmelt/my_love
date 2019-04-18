@@ -3,7 +3,7 @@
 
 """
 @description: 从所有上市公司筛选300家上市公司数据/Data filter
-@file_name: 300_file_filter.py
+@file_name: file_filter_300.py
 @project: my_love
 @version: 1.0
 @date: 2018/11/11 15:15
