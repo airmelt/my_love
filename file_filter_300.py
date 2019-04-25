@@ -30,7 +30,21 @@ def select(from_file, filter_file):
     outfile.to_excel(r'筛选数据.xlsx', index=False, encoding='utf-8')
 
 
+def txt_filter(from_file):
+    """
+    筛选数据
+    :param from_file: 传入文件名
+    :return:
+    """
+    with open(from_file, 'r', encoding='utf-8') as f:
+        txt_list = f.readlines()
+        with open('output.txt', 'w', encoding='utf-8') as f1:
+            for i in range(len(txt_list)):
+                if i % 8 == 1:
+                    f1.write(txt_list[i])
+
+
 if __name__ == '__main__':
-    file1 = r'最最最后的指标.xlsx'
-    file2 = r'300家.xlsx'
+    file1 = r'筛选数据2019-04-21.xlsx'
+    file2 = r'筛选数据20190420.xlsx'
     select(file1, file2)
