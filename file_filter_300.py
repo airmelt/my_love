@@ -44,6 +44,13 @@ def txt_filter(from_file):
                     f1.write(txt_list[i])
 
 
+def left_join(from_file, filter_file):
+    df1 = pd.read_excel(from_file)
+    df2 = pd.read_excel(filter_file)
+    result = pd.merge(df1, df2, on=['CODE', 'YEAR'], how='left')
+    result.to_excel(r'筛选数据.xlsx', index=False, encoding='utf-8')
+
+
 if __name__ == '__main__':
     file1 = r'筛选数据2019-04-21.xlsx'
     file2 = r'筛选数据20190420.xlsx'
