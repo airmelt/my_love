@@ -24,7 +24,7 @@ def load_data(filename, sheetname):
             label(mat):标签
     """
     df = pd.read_excel(filename, sheet_name=sheetname)
-    feature = df.iloc[:, 0:6]
+    feature = df.iloc[:, 0:5]
     label = df.iloc[:, -2]
     maxminz = [
         [
@@ -120,15 +120,15 @@ def output_layer(sum_mat):
 def genarateM(n, maxminz):  # 取100
     arr = np.linspace(maxminz[n][1], maxminz[n][0], 100)
     xgfeature = []
-    for i in range(6):
+    for i in range(5):
         if i != n and i != 5:
             xgfeature.append([maxminz[i][2]] * 100)
         else:
-            if i != 5 and n != 5:
+            if i != 4 and n != 4:
                 xgfeature.append(arr)
-        if i == 5 and n != 5:
+        if i == 4 and n != 4:
             xgfeature.append([0] * 100)
-        if i == 5 and n == 5:
+        if i == 4 and n == 4:
             xgfeature.append([0] * 50 + [1] * 50)
     return np.mat(xgfeature).T
 
@@ -136,15 +136,15 @@ def genarateM(n, maxminz):  # 取100
 def genarateM1(n, maxminz, data):
     arr = np.linspace(maxminz[n][1], maxminz[n][0], 100)
     xgfeature = []
-    for i in range(6):
-        if i != n and i != 5:
+    for i in range(5):
+        if i != n and i != 4:
             xgfeature.append([data[0, i]] * 100)
         else:
-            if i != 5 and n != 5:
+            if i != 4 and n != 4:
                 xgfeature.append(arr)
-        if i == 5 and n != 5:
+        if i == 4 and n != 4:
             xgfeature.append([0] * 100)
-        if i == 5 and n == 5:
+        if i == 4 and n == 4:
             xgfeature.append([0] * 50 + [1] * 50)
     return np.mat(xgfeature).T
 
@@ -180,7 +180,7 @@ def RMSE(out_mat, teY):
 
 def Mr(Tex):
     n = np.shape(teX)[0]
-    guoqi = [-0.0623732, 0.0000254, 1.625355, -0.0938985, 0.0988323, 2.355644]
+    guoqi = [-0.0623732, 0.0000254, 1.625355, -0.0938985, 0.0988323]
     guoqicons = [-9.111716]
 
     feiguoqi = [-0.0832964, 0.0526446, 3.229266, -0.0993228, 0.1933707, 4.1525]
@@ -188,7 +188,7 @@ def Mr(Tex):
 
     zong = [-0.0515938, 0.0003216, 2.326571, -0.0979011, 0.1407304, 3.167704]
     zongcons = [-17.53259]
-    pram = np.mat(np.reshape(guoqi, (6, 1)))
+    pram = np.mat(np.reshape(guoqi, (5, 1)))
     cons = np.mat(np.reshape(guoqicons * n, (n, 1)))
     pre = Tex * pram + cons
     return pre
@@ -204,10 +204,10 @@ def calsix(trX, tex, trY):
                 0.95),
             trY))
     for i in range(np.shape(tex)[0]):
-        if tex[i, 5] == 1:
-            tex[i, 5] = 0
-        if tex[i, 5] == 0:
-            tex[i, 5] = 1
+        if tex[i, 4] == 1:
+            tex[i, 4] = 0
+        if tex[i, 4] == 0:
+            tex[i, 4] = 1
     output_mat1 = output_layer(
         sum_layer(
             Gauss(
@@ -222,7 +222,7 @@ def calsix(trX, tex, trY):
 if __name__ == '__main__':
     # 1.导入数据
     print('------------------------1. Load Data----------------------------')
-    feature, label, maxminz = load_data('国企20190826.xlsx', 'Sheet1')  # 改要读的文件
+    feature, label, maxminz = load_data('国企20190723.xlsx', 'Sheet1')  # 改要读的文件
     print(maxminz)
     print(feature)
     # 2.数据集和测试集
@@ -235,40 +235,54 @@ if __name__ == '__main__':
     """
     这里是测试比重
     """
-    # sk = []
-    # data = feature[4100,:]
-    # print('dada',data)
-    # for i in range(6):
-    #
-    #     # Xgf = genarateM(i,maxminz)
-    #     Xgf = genarateM1(i, maxminz,data)
-    #     print(i)
-    #     print()
-    #     # print(Xgf)
-    #     if i ==5:
-    #         print('input:',Xgf[0,:])
-    #
-    #     output_matx = output_layer(sum_layer(Gauss(distance_mat(trX, Xgf), 0.95), trY))
-    #
-    #     a = baifen(output_matx)
-    #     sk.append(a)
-    #     print(a)
-    #
-    # for i in range(6):
-    #     print(i,':',sk[i]/sum(sk))
+    sk = []
+    data = feature[4100, :]
+    print('dada', data)
+    for i in range(5):
+
+        # Xgf = genarateM(i,maxminz)
+        Xgf = genarateM1(i, maxminz, data)
+        print(i)
+        print()
+        # print(Xgf)
+        if i == 4:
+            print('input:', Xgf[0, :])
+
+        output_matx = output_layer(
+            sum_layer(
+                Gauss(
+                    distance_mat(
+                        trX,
+                        Xgf),
+                    0.95),
+                trY))
+
+        a = baifen(output_matx)
+        sk.append(a)
+        print(a)
+
+    for i in range(5):
+        print(i, ':', sk[i] / sum(sk))
 
     """
     单个测试
     """
-    # output_mat = output_layer(sum_layer(Gauss(distance_mat(trX, teX), 0.9), trY))  #从这里找我要的 国企1.1，非国企 0.9
-    # mrpre = Mr(teX)
-    # print(np.reshape(output_mat,(1,len(output_mat))))
-    # print(np.reshape(mrpre,(1,len(mrpre))))
-    # print(np.reshape(teY,(1,len(teY))))
-    # rmse = RMSE(output_mat,teY)
-    # rmse1 = RMSE(mrpre, teY)
-    # print('GRNN:',rmse)
-    # print('MR:',rmse1)
+    output_mat = output_layer(
+        sum_layer(
+            Gauss(
+                distance_mat(
+                    trX,
+                    teX),
+                1.1),
+            trY))  # 从这里找我要的 国企1.1，非国企 0.9
+    mrpre = Mr(teX)
+    print(np.reshape(output_mat, (1, len(output_mat))))
+    print(np.reshape(mrpre, (1, len(mrpre))))
+    print(np.reshape(teY, (1, len(teY))))
+    rmse = RMSE(output_mat, teY)
+    rmse1 = RMSE(mrpre, teY)
+    print('GRNN:', rmse)
+    print('MR:', rmse1)
 
     """
     下面这段是画图
