@@ -50,5 +50,33 @@ def import_file(input_file: str) -> None:
     df.to_excel('导入' + input_file, index=False, encoding='utf-8')
 
 
+def check_file(file_name: str) -> None:
+    df1 = pd.read_csv(file_name)
+    df = pd.DataFrame(columns=['对账序号', '凭证日期', '凭证编号', '业务日期', '结算方式', '结算单号',
+                               '摘要', '借方金额', '贷方金额', '对方单位', '说明'])
+    for i in range(0, (df1.shape[0] >> 1), 2):
+        if pd.isna(df1.iloc[i, 2]):
+            num1 = str(df1.iloc[i + 1, 2])
+            num2 = str(df1.iloc[i, 6])
+        else:
+            num1 = str(df1.iloc[i, 2])
+            num2 = str(df1.iloc[i + 1, 6])
+        if num1[-5:] != num2[1:6]:
+            if pd.isna(df1.iloc[i, 5]) or df1.iloc[i + 1, 5] != df1.iloc[i, 5]:
+                df = df.append(df1.iloc[i]).append(df1.iloc[i + 1])
+    df.to_csv('wrong.csv', index=False, encoding='utf-8')
+    df1 = df1.drop(df.index)
+    df1.to_csv('right.csv', index=False, encoding='utf-8')
+    add_csv_bom('wrong.csv')
+    add_csv_bom('right.csv')
+
+
+def add_csv_bom(input_file: str) -> None:
+    with open(input_file, 'r+', encoding='utf-8') as f:
+        content = f.read()
+        f.seek(0, 0)
+        f.write('\ufeff' + content)
+
+
 if __name__ == '__main__':
     import_file('')
