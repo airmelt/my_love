@@ -64,11 +64,24 @@ def check_file(file_name: str) -> None:
         if num1[-5:] != num2[1:6]:
             if pd.isna(df1.iloc[i, 5]) or df1.iloc[i + 1, 5] != df1.iloc[i, 5]:
                 df = df.append(df1.iloc[i]).append(df1.iloc[i + 1])
-    df.to_csv('wrong.csv', index=False, encoding='utf-8')
+    worse = pd.DataFrame(columns=['对账序号', '凭证日期', '凭证编号', '业务日期', '结算方式', '结算单号',
+                                  '摘要', '借方金额', '贷方金额', '对方单位', '说明'])
+    for i in range(0, (df.shape[0] >> 1), 2):
+        num1, num2 = (str(df.iloc[i + 1, 2]), str(df.iloc[i, 6])) if pd.isna(df.iloc[i, 2]) \
+            else (str(df.iloc[i, 2]), str(df.iloc[i + 1, 6]))
+        if num2.startswith('南'):
+            num2 = num2.replace('南', '', 1)
+        if all(j.isdigit() for j in num2[:5]):
+            if num1[-5:] != num2[:5]:
+                worse = worse.append(df.iloc[i]).append(df.iloc[i + 1])
     df1 = df1.drop(df.index)
     df1.to_csv('right.csv', index=False, encoding='utf-8')
+    worse.to_csv('worse.csv', index=False, encoding='utf-8')
+    df = df.drop(worse.index)
+    df.to_csv('wrong.csv', index=False, encoding='utf-8')
     add_csv_bom('wrong.csv')
     add_csv_bom('right.csv')
+    add_csv_bom('worse.csv')
 
 
 def add_csv_bom(input_file: str) -> None:
