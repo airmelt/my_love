@@ -92,4 +92,6 @@ def add_csv_bom(input_file: str) -> None:
 
 
 if __name__ == '__main__':
-    import_file('')
+    print('请输入文件名: ')
+    f = input()
+    import_file(f)
