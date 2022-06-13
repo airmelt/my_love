@@ -104,9 +104,10 @@ def filter_file(input_file: str) -> None:
     hundred = 0
     fh = 0
     th = 0
+    nums = [0] * 9
     for i in range(df1.shape[0]):
         num = df1.iloc[i, 2]
-        subject_num = df1.iloc[i, 9]
+        subject_num = df1.iloc[i, 10]
         if num in num_set:
             continue
         if subject_num not in subject_set:
@@ -115,18 +116,21 @@ def filter_file(input_file: str) -> None:
         new_row['凭证日期'] = df1.iloc[i, 0]
         new_row['凭证字'] = df1.iloc[i, 1]
         new_row['凭证编号'] = df1.iloc[i, 2]
-        new_row['摘要'] = df1.iloc[i, 6]
-        new_row['科目编号'] = df1.iloc[i, 9]
-        new_row['科目名称'] = df1.iloc[i, 10]
-        new_row['借金额'] = df1.iloc[i, 15]
-        new_row['贷金额'] = float(df1.iloc[i, 16])
-        if float(df1.iloc[i, 16]) > 500000.00:
+        new_row['摘要'] = df1.iloc[i, 7]
+        new_row['科目编号'] = df1.iloc[i, 10]
+        new_row['科目名称'] = df1.iloc[i, 11]
+        new_row['借金额'] = df1.iloc[i, 16]
+        new_row['贷金额'] = float(df1.iloc[i, 17])
+        money = float(df1.iloc[i, 17])
+        if 50000.00 <= money < 500000.00:
+            nums[int(money / 50000.00) - 1] += 1
+        if money > 500000.00:
             fifty += 1
-        if float(df1.iloc[i, 16]) > 1000000.00:
+        if money > 1000000.00:
             hundred += 1
-        if float(df1.iloc[i, 16]) > 1500000.00:
+        if money > 1500000.00:
             fh += 1
-        if float(df1.iloc[i, 16]) > 2000000.00:
+        if money > 2000000.00:
             th += 1
         df = df.append(new_row, ignore_index=True)
     df.sort_values(by=['贷金额'], inplace=True)
@@ -148,6 +152,10 @@ def filter_file(input_file: str) -> None:
     new_row['凭证日期'] = '大于200万'
     new_row['凭证字'] = str(th)
     df = df.append(new_row, ignore_index=True)
+    for i in range(9):
+        new_row['凭证日期'] = '大于等于' + str(5 * (i + 1)) + '万, 小于' + str(5 * (i + 2)) + '万'
+        new_row['凭证字'] = str(nums[i])
+        df = df.append(new_row, ignore_index=True)
     df.to_excel('过滤' + input_file, index=False, encoding='utf-8')
 
 
